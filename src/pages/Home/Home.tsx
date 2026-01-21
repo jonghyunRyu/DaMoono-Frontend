@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import BottomNav from '@/components/BottomNav';
 import Header from '@/components/Header';
 import { Loading3D } from '@/components/loading';
@@ -5,6 +6,13 @@ import Layout from '../layout/Layout';
 import * as styles from './style/Home.css';
 
 export default function Home() {
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const slides = [
+    { id: 1, content: '성향 테스트 하러가기' },
+    { id: 2, content: '슬라이드 2' },
+    { id: 3, content: '슬라이드 3' },
+  ];
+
   return (
     <Layout>
       <Header />
@@ -32,9 +40,29 @@ export default function Home() {
 
         {/* 이벤트 슬라이더 */}
         <section className={styles.section}>
-          <div className={styles.slider}>
-            <div className={styles.sliderCard}>
-              <div className={styles.sliderContent}>성향 테스트 하러가기</div>
+          <div className={styles.sliderWrapper}>
+            <div
+              className={styles.sliderTrack}
+              style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+            >
+              {slides.map((slide) => (
+                <div key={slide.id} className={styles.sliderCard}>
+                  <div className={styles.sliderContent}>{slide.content}</div>
+                </div>
+              ))}
+            </div>
+            <div className={styles.sliderDots}>
+              {slides.map((slide, index) => (
+                <button
+                  key={slide.id}
+                  type="button"
+                  className={
+                    currentSlide === index ? styles.dotActive : styles.dot
+                  }
+                  onClick={() => setCurrentSlide(index)}
+                  aria-label={`슬라이드 ${index + 1}로 이동`}
+                />
+              ))}
             </div>
           </div>
         </section>
