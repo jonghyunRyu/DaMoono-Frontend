@@ -1,30 +1,21 @@
 import BottomNav from '@/components/BottomNav';
 import Header from '@/components/Header';
-import * as styles from '../Home/style/Home.css';
 import Layout from '../layout/Layout';
-import * as css from '../MyPage/styles/MyPage.css';
-import { MenuSection } from './components/MenuSection';
-import { MenuTabs } from './components/MenuTabs';
+import { CounselSection } from './components/CounselSection';
+import { LogoutBtn } from './components/LogoutBtn';
+import { Menu } from './components/Menu';
 import { TipsSection } from './components/TipsSection';
+import * as css from './styles/MyPage.css';
 
 export default function MyPage() {
   return (
     <Layout>
-      <div className={styles.container}>
-        {/* 헤더 */}
-        <Header />
-
-        {/* 상담 섹션 */}
-        <section className={css.counselCard}>
-          <span>상담 내역이 없어요</span>
-          <button>상담 찾으러 가기</button>
-        </section>
-
-        <MenuTabs />
-        <MenuSection />
+      <Header />
+      <div className={css.mypage}>
+        <CounselSection />
+        <Menu />
         <TipsSection />
-
-        <button className={css.logout}>로그아웃</button>
+        <LogoutBtn />
       </div>
       <BottomNav />
     </Layout>
