@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router';
 import { useEffect, useState } from 'react';
 import BottomNav from '@/components/BottomNav';
 import Guide from '@/components/Guide';
@@ -6,6 +7,7 @@ import Layout from '../layout/Layout';
 import * as styles from './style/Home.css';
 
 export default function Home() {
+  const navigate = useNavigate();
   const [currentSlide, setCurrentSlide] = useState(0);
   const [showGuide, setShowGuide] = useState(false);
 
@@ -70,7 +72,11 @@ export default function Home() {
         </div> */}
 
         {/* AI 챗봇 버튼 */}
-        <button type="button" className={styles.chatButton}>
+        <button
+          type="button"
+          className={styles.chatButton}
+          onClick={() => navigate('/chat')}
+        >
           <span className={styles.chatText}>무너에게 다 무너봐~</span>
           <span className={styles.chatBadge}>채팅하기</span>
         </button>
