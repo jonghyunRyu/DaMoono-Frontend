@@ -1,9 +1,18 @@
 import { createBrowserRouter } from 'react-router';
 import { RouterProvider as Provider } from 'react-router/dom';
+import ArmyGuide from '@/pages/Customer/ArmyGuide';
+import CustomerService from '@/pages/Customer/CustomerService';
+import MinorGuide from '@/pages/Customer/MinorGuide';
+import ProxyGuide from '@/pages/Customer/ProxyGuide';
 import Admin from '../pages/Admin/Admin';
+import ChatManualPage from '../pages/Chat/ChatManualPage';
+import ChatPage from '../pages/Chat/ChatPage';
 import Home from '../pages/Home/Home';
 import Login from '../pages/Login/Login';
+import Plan from '../pages/Plan/Plan';
+import Subscribe from '../pages/Subscribe/Subscribe';
 import Summary from '../pages/Summary/SummaryPage';
+
 import { PAGE_PATHS } from '../shared/config/paths';
 
 export default function RouterProvider() {
@@ -17,12 +26,46 @@ export default function RouterProvider() {
       Component: Home,
     },
     {
+      path: PAGE_PATHS.CHAT,
+      Component: ChatPage,
+    },
+    {
+      path: PAGE_PATHS.CHAT_MANUAL,
+      Component: ChatManualPage,
+    },
+    {
       path: PAGE_PATHS.SUMMARY,
       Component: Summary,
     },
     {
       path: PAGE_PATHS.ADMIN,
       Component: Admin,
+    },
+    {
+      path: PAGE_PATHS.CUSTOMER_SERVICE,
+      element: <CustomerService />,
+    },
+
+    {
+      path: PAGE_PATHS.ARMY_GUIDE,
+      element: <ArmyGuide />,
+    },
+    {
+      path: PAGE_PATHS.PROXY_GUIDE,
+      element: <ProxyGuide />,
+    },
+
+    {
+      path: PAGE_PATHS.MINOR_GUIDE,
+      element: <MinorGuide />,
+    },
+    {
+      path: PAGE_PATHS.PLAN,
+      Component: Plan,
+    },
+    {
+      path: PAGE_PATHS.SUBSCRIBE,
+      Component: Subscribe,
     },
   ]);
   return <Provider router={router} />;

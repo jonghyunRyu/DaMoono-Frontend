@@ -1,7 +1,7 @@
 import { style } from '@vanilla-extract/css';
 
 export const pageContainer = style({
-  padding: '20px 20px 100px 20px',
+  padding: '100px 20px 100px 20px',
   display: 'flex',
   flexDirection: 'column',
   gap: '16px',
