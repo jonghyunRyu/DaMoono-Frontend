@@ -11,6 +11,7 @@ export const PAGE_PATHS = {
   CHAT: '/chat',
   CHAT_MANUAL: '/chat/manual',
   MYPAGE: '/mypage',
+  COUNSEL: '/counsel',
   CUSTOMER_SERVICE: '/customer-service',
   ARMY_GUIDE: '/customer-service/army',
   PROXY_GUIDE: '/customer-service/proxy',

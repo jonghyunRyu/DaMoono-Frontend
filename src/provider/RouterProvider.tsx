@@ -5,6 +5,7 @@ import CustomerService from '@/pages/Customer/CustomerService';
 import MinorGuide from '@/pages/Customer/MinorGuide';
 import ProxyGuide from '@/pages/Customer/ProxyGuide';
 import MyPage from '@/pages/MyPage/MyPage';
+import Counsel from '@/pages/MyPage/pages/Counsel';
 import Admin from '../pages/Admin/Admin';
 import ChatAdminPage from '../pages/Chat/ChatAdminPage';
 import ChatConsultPage from '../pages/Chat/ChatConsultPage';
@@ -91,6 +92,10 @@ export default function RouterProvider() {
     {
       path: PAGE_PATHS.SUBSCRIBE,
       Component: Subscribe,
+    },
+    {
+      path: PAGE_PATHS.COUNSEL,
+      Component: Counsel,
     },
     {
       path: PAGE_PATHS.PERSONALITY_TEST,
