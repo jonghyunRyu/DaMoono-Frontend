@@ -4,5 +4,7 @@ export const PAGE_PATHS = {
   SUMMARY: '/summary',
   ADMIN: '/admin',
   PLAN: '/plan',
+  PLAN_DETAIL: '/plan/:id',
   SUBSCRIBE: '/subscribe',
+  SUBSCRIBE_DETAIL: '/subscribe/:id',
 };

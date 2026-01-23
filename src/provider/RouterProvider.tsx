@@ -4,7 +4,9 @@ import Admin from '../pages/Admin/Admin';
 import Home from '../pages/Home/Home';
 import Login from '../pages/Login/Login';
 import Plan from '../pages/Plan/Plan';
+import PlanDetail from '../pages/Plan/PlanDetail';
 import Subscribe from '../pages/Subscribe/Subscribe';
+import SubscribeDetail from '../pages/Subscribe/SubscribeDetail';
 import Summary from '../pages/Summary/SummaryPage';
 import { PAGE_PATHS } from '../shared/config/paths';
 
@@ -31,8 +33,16 @@ export default function RouterProvider() {
       Component: Plan,
     },
     {
+      path: PAGE_PATHS.PLAN_DETAIL,
+      Component: PlanDetail,
+    },
+    {
       path: PAGE_PATHS.SUBSCRIBE,
       Component: Subscribe,
+    },
+    {
+      path: PAGE_PATHS.SUBSCRIBE_DETAIL,
+      Component: SubscribeDetail,
     },
   ]);
   return <Provider router={router} />;
