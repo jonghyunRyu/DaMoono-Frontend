@@ -46,9 +46,10 @@ export default function Signup() {
         setIsIdAvailable(false);
       }
     } catch (error) {
+      console.error('중복 확인 에러:', error);
       alert(
         error instanceof Error
-          ? error.message
+          ? `중복 확인 실패: ${error.message}`
           : '중복 확인 중 오류가 발생했습니다.',
       );
     } finally {
@@ -89,9 +90,10 @@ export default function Signup() {
       alert('회원가입이 완료되었습니다.');
       navigate(PAGE_PATHS.LOGIN_FORM);
     } catch (error) {
+      console.error('회원가입 에러:', error);
       alert(
         error instanceof Error
-          ? error.message
+          ? `회원가입 실패: ${error.message}`
           : '회원가입 중 오류가 발생했습니다.',
       );
     } finally {
