@@ -135,7 +135,11 @@ export default function ConsultModal({
       type="button"
       className={styles.modalOverlay}
       onClick={onClose}
-      onKeyDown={(e) => e.key === 'Escape' && onClose()}
+      onKeyDown={(e) => {
+        if (e.key === 'Escape' && onClose) {
+          onClose();
+        }
+      }}
     >
       <div
         className={styles.modalContainer}
