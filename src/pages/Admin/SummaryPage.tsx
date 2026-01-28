@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { useLocation } from 'react-router';
 import BottomNav from '@/components/BottomNav/BottomNav';
 import Header from '@/components/Header/Header';
 import Layout from '@/pages/layout/Layout';
@@ -80,7 +81,11 @@ const itemVariants = {
 };
 
 const SummaryPage = () => {
-  const adminData = MOCK_SUMMARY_DATA.summary_admin;
+  const location = useLocation();
+  // 넘겨받은 데이터가 없을 경우를 대비해 기본값 설정
+  const summaryData =
+    location.state?.summaryData?.summary_admin ||
+    MOCK_SUMMARY_DATA.summary_admin;
 
   return (
     <Layout>
@@ -99,23 +104,23 @@ const SummaryPage = () => {
         </motion.section>
 
         <motion.section className={s.contentSection} variants={itemVariants}>
-          <ReportCard data={adminData.report_card} />
+          <ReportCard data={summaryData?.report_card} />
         </motion.section>
 
         <motion.section className={s.contentSection} variants={itemVariants}>
-          <MoodTimeline phases={adminData.mood_timeline} />
+          <MoodTimeline phases={summaryData?.mood_timeline} />
         </motion.section>
 
         <motion.section className={s.contentSection} variants={itemVariants}>
           <CustomerDNA
-            dnaList={adminData.customer_dna}
+            dnaList={summaryData?.customer_dna}
             title="고객 성향 태그"
           />
         </motion.section>
 
         <motion.section className={s.contentSection} variants={itemVariants}>
           <CustomerDNA
-            dnaList={adminData.risk_tagging}
+            dnaList={summaryData?.risk_tagging}
             title="핵심 리스크 태그"
           />
         </motion.section>

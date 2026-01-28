@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { useEffect, useRef, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { useNavigate } from 'react-router';
@@ -64,7 +65,20 @@ export default function ChatConsultPage() {
 
     // 상담 종료
     socketService.onConsultEnded(() => {
-      alert('상담이 종료되었습니다.');
+      // 사용자가 '요약 중' 플래그를 세웠다면 이미 요약 처리를 진행중이므로 무시
+      const isSummarizing = sessionStorage.getItem('is_user_summarizing');
+      if (isSummarizing === 'true') {
+        sessionStorage.removeItem('is_user_summarizing');
+        return;
+      }
+
+      // 내가 직접 종료를 누른 게 아니라면 (즉, 상담사가 종료했거나 강제 종료된 경우)
+      const isSelfEnd = sessionStorage.getItem('is_user_self_end');
+      if (!isSelfEnd) {
+        alert('상담사에 의해 상담이 종료되었습니다.');
+      }
+
+      sessionStorage.removeItem('is_user_self_end');
       navigate('/chat');
     });
 
@@ -100,6 +114,8 @@ export default function ChatConsultPage() {
   };
 
   const handleConfirmEndConsult = () => {
+    // 종료하기 전, 내가 직접 눌렀다는 표시를 남김
+    sessionStorage.setItem('is_user_self_end', 'true');
     socketService.endConsult();
     setModalType(null);
     navigate('/chat');
@@ -109,16 +125,39 @@ export default function ChatConsultPage() {
     setModalType('summary');
   };
 
-  const handleConfirmSummary = () => {
+  const handleConfirmSummary = async () => {
+    // 요약을 시작했음을 표시
+    sessionStorage.setItem('is_user_summarizing', 'true');
     setModalType('summarizing');
 
-    // 요약 API 호출 시뮬레이션 (실제로는 API 호출)
-    setTimeout(() => {
-      socketService.endConsult();
+    try {
+      // 1. 배포된 백엔드 URL 설정 (실제 주소로 교체하세요)
+      const apiUrl = import.meta.env.VITE_API_URL;
+      const response = await axios.post(
+        `${apiUrl}/summary/consults/${_sessionId}/user`,
+        {}, // POST 바디 (비어있더라도 전달)
+        {
+          withCredentials: true, // 이 옵션을 추가하세요!
+        },
+      );
+
+      if (response.status === 201 || response.status === 200) {
+        socketService.endConsult();
+        setModalType(null);
+
+        // response.data 전체가 아니라 .payload만 넘깁니다.
+        navigate('/summary', {
+          state: { summaryData: response.data.payload },
+        });
+      }
+    } catch (error) {
+      console.error('요약 생성 중 에러 발생:', error);
+      alert('요약 데이터를 가져오는데 실패했습니다.');
       setModalType(null);
-      // TODO: 요약 결과 페이지로 이동
-      navigate('/mypage');
-    }, 3000);
+    } finally {
+      // 플래그 정리
+      sessionStorage.removeItem('is_user_summarizing');
+    }
   };
 
   const handleCloseModal = () => {
