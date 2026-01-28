@@ -1,8 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router';
+import planBanner from '@/assets/images/Plan-banner.png';
+import serviceRecommendationBanner from '@/assets/images/ServiceRecommendation-banner.png';
+import subscribeBanner from '@/assets/images/Subscribe-banner.png';
 import BottomNav from '@/components/BottomNav';
 import Guide from '@/components/Guide';
 import Header from '@/components/Header';
+import LoginRequiredModal from '@/components/modal/LoginRequiredModal';
 import { MOCK_PLANS } from '@/pages/Plan/constants';
 import { MOCK_SUBSCRIBES } from '@/pages/Subscribe/constants';
 import { PAGE_PATHS } from '@/shared/config/paths';
@@ -15,6 +19,7 @@ export default function Home() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [showGuide, setShowGuide] = useState(false);
   const [activeTab, setActiveTab] = useState<'plan' | 'subscribe'>('plan');
+  const [showLoginModal, setShowLoginModal] = useState(false);
 
   // 랜덤으로 5개 선택하는 함수
   const getRandomItems = <T,>(array: T[], count: number): T[] => {
@@ -31,11 +36,22 @@ export default function Home() {
   const slides = [
     {
       id: 1,
-      content: '성향 테스트 하러가기',
-      path: PAGE_PATHS.PERSONALITY_TEST,
+      content: '맞춤 서비스 추천받기',
+      path: PAGE_PATHS.SERVICE_RECOMMENDATION,
+      image: serviceRecommendationBanner,
     },
-    { id: 2, content: '요금제 둘러보기', path: PAGE_PATHS.PLAN },
-    { id: 3, content: '구독 둘러보기', path: PAGE_PATHS.SUBSCRIBE },
+    {
+      id: 2,
+      content: '요금제 둘러보기',
+      path: PAGE_PATHS.PLAN,
+      image: planBanner,
+    },
+    {
+      id: 3,
+      content: '구독 둘러보기',
+      path: PAGE_PATHS.SUBSCRIBE,
+      image: subscribeBanner,
+    },
   ];
 
   const guideSteps = [
@@ -82,6 +98,15 @@ export default function Home() {
     setShowGuide(false);
   };
 
+  const handleChatClick = () => {
+    const userName = localStorage.getItem('userName');
+    if (!userName) {
+      setShowLoginModal(true);
+    } else {
+      navigate('/chat');
+    }
+  };
+
   return (
     <Layout>
       <Header />
@@ -99,7 +124,7 @@ export default function Home() {
         <button
           type="button"
           className={styles.chatButton}
-          onClick={() => navigate('/chat')}
+          onClick={handleChatClick}
         >
           <span className={styles.chatText}>무너에게 다 무너봐~</span>
           <span className={styles.chatBadge}>채팅하기</span>
@@ -125,7 +150,11 @@ export default function Home() {
                   className={styles.sliderCard}
                   onClick={() => navigate(slide.path)}
                 >
-                  <div className={styles.sliderContent}>{slide.content}</div>
+                  <img
+                    src={slide.image}
+                    alt={slide.content}
+                    className={styles.sliderImage}
+                  />
                 </button>
               ))}
             </div>
@@ -152,7 +181,11 @@ export default function Home() {
             <button
               type="button"
               className={styles.moreButton}
-              onClick={() => navigate(PAGE_PATHS.PLAN)}
+              onClick={() =>
+                navigate(
+                  activeTab === 'plan' ? PAGE_PATHS.PLAN : PAGE_PATHS.SUBSCRIBE,
+                )
+              }
             >
               더보기 &gt;
             </button>
@@ -230,6 +263,8 @@ export default function Home() {
       {showGuide && (
         <Guide steps={guideSteps} onComplete={handleGuideComplete} />
       )}
+
+      {showLoginModal && <LoginRequiredModal />}
     </Layout>
   );
 }
