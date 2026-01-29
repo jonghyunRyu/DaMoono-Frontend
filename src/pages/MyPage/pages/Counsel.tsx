@@ -26,22 +26,32 @@ export default function Counsel() {
   const [sort, setSort] = useState<CounselSortType>('latest');
   const [items, setItems] = useState<CounselItem[]>([]);
   const [totalCount, setTotalCount] = useState(0);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   // 상담 목록 로드
   useEffect(() => {
     const load = async () => {
-      const res = await fetchCounselList({ sort, page: 1, size: 20 });
+      try {
+        setLoading(true);
 
-      const mapped: CounselItem[] = res.items.map((item: CounselApiItem) => ({
-        id: item.sessionId,
-        date: formatDate(item.createdAt),
-        content: item.title,
-        summarized: item.isSummarized,
-      }));
+        const res = await fetchCounselList({ sort, page: 1, size: 20 });
 
-      setItems(mapped);
-      setTotalCount(res.count);
+        const mapped: CounselItem[] = res.items.map((item: CounselApiItem) => ({
+          id: item.sessionId,
+          date: formatDate(item.createdAt),
+          content: item.title,
+          summarized: item.isSummarized,
+        }));
+
+        setItems(mapped);
+        setTotalCount(res.count);
+      } catch (e) {
+        console.error('상담 목록 로드 실패', e);
+        alert('상담 내역을 불러오지 못했습니다.');
+      } finally {
+        setLoading(false);
+      }
     };
 
     load();
@@ -68,11 +78,34 @@ export default function Counsel() {
       console.log(res);
       if (res.status === 200 || res.status === 201) {
         // /summary 페이지로 이동
-        navigate('/summary', { state: { summaryData: res.data.payload } });
+        navigate('/summary', {
+          state: {
+            summaryData: res.data.payload,
+            from: 'mypage', // 또는 from을 생략하면 기본값이 'mypage'
+          },
+        });
       }
     } catch (e) {
       console.error('요약 생성 실패', e);
       alert('요약 생성에 실패했습니다.');
+    }
+  };
+
+  const handleGetSummary = async (sessionId: string) => {
+    try {
+      const apiUrl = import.meta.env.VITE_API_URL;
+
+      const res = await axios.get(
+        `${apiUrl}/summary/consults/${sessionId}/user`,
+        { withCredentials: true },
+      );
+
+      if (res.status === 200) {
+        navigate('/summary', { state: { summaryData: res.data.payload } });
+      }
+    } catch (e) {
+      console.error('요약 조회 실패', e);
+      alert('요약을 불러오지 못했습니다.');
     }
   };
 
@@ -101,9 +134,15 @@ export default function Counsel() {
             </select>
           </div>
         </header>
-
-        {/* CounselCardList에 onSummarize 전달 */}
-        <CounselCardList items={sortedItems} onSummarize={handleSummarize} />
+        {loading ? (
+          <div>불러오는 중...</div>
+        ) : (
+          <CounselCardList
+            items={sortedItems}
+            onSummarize={handleSummarize}
+            onGetSummary={handleGetSummary}
+          />
+        )}
       </main>
       <BottomNav />
     </Layout>
