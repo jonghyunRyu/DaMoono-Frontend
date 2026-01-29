@@ -155,26 +155,34 @@ function SortFilterPanel({
   const sortMenuRef = useRef<HTMLDivElement>(null);
   const sortOrderMenuRef = useRef<HTMLDivElement>(null);
   const filterMenuRef = useRef<HTMLDivElement>(null);
+  const sortOrderButtonRef = useRef<HTMLButtonElement>(null);
+  const sortTargetButtonRef = useRef<HTMLButtonElement>(null);
+  const filterButtonRef = useRef<HTMLButtonElement>(null);
 
   // 외부 클릭 시 메뉴 닫기
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Node;
+
+      // If click is on any of the toggle buttons, do not treat as outside
       if (
-        sortMenuRef.current &&
-        !sortMenuRef.current.contains(event.target as Node)
+        sortOrderButtonRef.current?.contains(target) ||
+        sortTargetButtonRef.current?.contains(target) ||
+        filterButtonRef.current?.contains(target)
       ) {
+        return;
+      }
+
+      if (sortMenuRef.current && !sortMenuRef.current.contains(target)) {
         setShowSortMenu(false);
       }
       if (
         sortOrderMenuRef.current &&
-        !sortOrderMenuRef.current.contains(event.target as Node)
+        !sortOrderMenuRef.current.contains(target)
       ) {
         setShowSortOrderMenu(false);
       }
-      if (
-        filterMenuRef.current &&
-        !filterMenuRef.current.contains(event.target as Node)
-      ) {
+      if (filterMenuRef.current && !filterMenuRef.current.contains(target)) {
         setShowFilterMenu(false);
       }
     };
@@ -197,6 +205,7 @@ function SortFilterPanel({
               setShowSortMenu(false);
               setShowFilterMenu(false);
             }}
+            ref={sortOrderButtonRef}
             className={styles.selectBase}
           >
             {sortOrder === null
@@ -311,6 +320,7 @@ function SortFilterPanel({
               setShowSortOrderMenu(false);
               setShowFilterMenu(false);
             }}
+            ref={sortTargetButtonRef}
             className={styles.selectBase}
           >
             {sortTarget ? SORT_LABELS[sortTarget] : '기본 정렬'}
@@ -401,6 +411,7 @@ function SortFilterPanel({
               setShowSortMenu(false);
               setShowSortOrderMenu(false);
             }}
+            ref={filterButtonRef}
             className={styles.selectBase}
           >
             필터링
