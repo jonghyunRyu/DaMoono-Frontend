@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import BottomNav from '../../components/BottomNav';
 import BridgeModal from '../Customer/BridgeModal.tsx';
 import Layout from '../layout/Layout';
@@ -8,53 +8,58 @@ export default function ProxyGuide() {
   const [checkedList, setCheckedList] = useState([false, false, false]);
   const [targetUrl, setTargetUrl] = useState<string | null>(null);
 
-  // 체크박스 상태 토글
+  // 페이지 진입 시 스크롤 위치 초기화 (모바일 스크롤 복원 방지)
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    const scrollContainer = document.querySelector(`.${S.scrollArea}`);
+    if (scrollContainer) {
+      scrollContainer.scrollTop = 0;
+    }
+  }, []);
+
   const handleCheck = (index: number) => {
     const newCheckedList = [...checkedList];
     newCheckedList[index] = !newCheckedList[index];
     setCheckedList(newCheckedList);
   };
 
-  // 진행률 계산
   const checkedCount = checkedList.filter(Boolean).length;
   const progressPercent = Math.round((checkedCount / 3) * 100);
 
   return (
     <Layout>
       <div className={S.scrollArea}>
-        {/* [수정] 린트 에러 방지를 위해 onClick 및 관련 로직 제거 */}
         <div className={S.topLogo} />
 
         <div className={S.headerFrame}>
           <span className={S.headerTitle}>대리인 신청 시 구비 서류</span>
         </div>
 
-        <h2 className={S.subTitle}>
-          다무너와 함께
-          <br />
-          서류를 챙겨보세요
-        </h2>
-
-        {/* [수정] 린트 에러 방지를 위해 onClick 및 관련 로직 제거 */}
-        <div className={S.characterImage} />
+        <div className={S.titleContainer}>
+          <h2 className={S.subTitle}>
+            다무너와 함께
+            <br />
+            서류를 챙겨보세요
+          </h2>
+          <div className={S.characterImage} />
+        </div>
 
         <div className={S.statusText}>준비 현황 ({checkedCount} / 3)</div>
-        <div className={S.progressBarContainer}>
-          <div
-            style={{
-              width: `${progressPercent}%`,
-              height: '100%',
-              backgroundColor: '#FBE88A',
-              transition: 'width 0.3s ease-in-out',
-            }}
-          />
-        </div>
-        <div className={S.percentText}>{progressPercent} %</div>
 
+        <div className={S.progressWrapper}>
+          <div className={S.progressBarContainer}>
+            <div
+              className={S.progressGauge}
+              style={{ width: `${progressPercent}%` }}
+            />
+          </div>
+          <div className={S.percentText}>{progressPercent} %</div>
+        </div>
+
+        {/* 대리인 신청 구비 서류 카드 리스트 */}
         <button
           type="button"
           className={S.documentCard}
-          style={{ top: '310px' }}
           onClick={() => handleCheck(0)}
         >
           <div className={S.docText}>
@@ -69,7 +74,6 @@ export default function ProxyGuide() {
         <button
           type="button"
           className={S.documentCard}
-          style={{ top: '480px' }}
           onClick={() => handleCheck(1)}
         >
           <div className={S.docText}>
@@ -84,7 +88,6 @@ export default function ProxyGuide() {
         <button
           type="button"
           className={S.documentCard}
-          style={{ top: '650px' }}
           onClick={() => handleCheck(2)}
         >
           <div className={S.docText}>

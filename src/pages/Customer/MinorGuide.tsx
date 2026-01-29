@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import BottomNav from '../../components/BottomNav';
 import BridgeModal from '../Customer/BridgeModal.tsx';
 import Layout from '../layout/Layout';
@@ -8,54 +8,58 @@ export default function MinorGuide() {
   const [checkedList, setCheckedList] = useState([false, false, false]);
   const [targetUrl, setTargetUrl] = useState<string | null>(null);
 
-  // 체크박스 토글 함수
+  // 페이지 진입 시 스크롤 위치 초기화 (모바일 스크롤 복원 방지)
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    const scrollContainer = document.querySelector(`.${S.scrollArea}`);
+    if (scrollContainer) {
+      scrollContainer.scrollTop = 0;
+    }
+  }, []);
+
   const handleCheck = (index: number) => {
     const newCheckedList = [...checkedList];
     newCheckedList[index] = !newCheckedList[index];
     setCheckedList(newCheckedList);
   };
 
-  // 진행률 계산 로직
   const checkedCount = checkedList.filter(Boolean).length;
   const progressPercent = Math.round((checkedCount / 3) * 100);
 
   return (
     <Layout>
       <div className={S.scrollArea}>
-        {/* 린트 에러 해결을 위해 onClick 이벤트 제거 */}
         <div className={S.topLogo} />
 
         <div className={S.headerFrame}>
           <span className={S.headerTitle}>미성년자 가입 구비 서류</span>
         </div>
 
-        <h2 className={S.subTitle}>
-          다무너와 함께
-          <br />
-          서류를 챙겨보세요
-        </h2>
-
-        {/* 린트 에러 해결을 위해 onClick 이벤트 제거 */}
-        <div className={S.characterImage} />
+        <div className={S.titleContainer}>
+          <h2 className={S.subTitle}>
+            다무너와 함께
+            <br />
+            서류를 챙겨보세요
+          </h2>
+          <div className={S.characterImage} />
+        </div>
 
         <div className={S.statusText}>준비 현황 ({checkedCount} / 3)</div>
-        <div className={S.progressBarContainer}>
-          <div
-            style={{
-              width: `${progressPercent}%`,
-              height: '100%',
-              backgroundColor: '#FBE88A',
-              transition: 'width 0.3s ease-in-out',
-            }}
-          />
-        </div>
-        <div className={S.percentText}>{progressPercent} %</div>
 
-        {/* 카드 1: 법정대리인 신분증 */}
+        <div className={S.progressWrapper}>
+          <div className={S.progressBarContainer}>
+            <div
+              className={S.progressGauge}
+              style={{ width: `${progressPercent}%` }}
+            />
+          </div>
+          <div className={S.percentText}>{progressPercent} %</div>
+        </div>
+
+        {/* 구비 서류 카드 리스트 */}
         <button
           type="button"
           className={S.documentCard}
-          style={{ top: '310px' }}
           onClick={() => handleCheck(0)}
         >
           <div className={S.docText}>
@@ -67,11 +71,9 @@ export default function MinorGuide() {
           </div>
         </button>
 
-        {/* 카드 2: 관계 증명 서류 */}
         <button
           type="button"
           className={S.documentCard}
-          style={{ top: '480px' }}
           onClick={() => handleCheck(1)}
         >
           <div className={S.docText}>
@@ -85,7 +87,7 @@ export default function MinorGuide() {
             type="button"
             className={S.linkButton}
             onClick={(e) => {
-              e.stopPropagation();
+              e.stopPropagation(); // 카드 체크 이벤트 전파 방지
               setTargetUrl('https://www.gov.kr');
             }}
           >
@@ -93,11 +95,9 @@ export default function MinorGuide() {
           </button>
         </button>
 
-        {/* 카드 3: 동의서 양식 */}
         <button
           type="button"
           className={S.documentCard}
-          style={{ top: '650px' }}
           onClick={() => handleCheck(2)}
         >
           <div className={S.docText}>
