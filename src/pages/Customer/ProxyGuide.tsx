@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'; // useEffect 추가
+import { useEffect, useState } from 'react';
 import BottomNav from '../../components/BottomNav';
 import BridgeModal from '../Customer/BridgeModal.tsx';
 import Layout from '../layout/Layout';
@@ -8,45 +8,33 @@ export default function ProxyGuide() {
   const [checkedList, setCheckedList] = useState([false, false, false]);
   const [targetUrl, setTargetUrl] = useState<string | null>(null);
 
-  /**
-   * [추가] 페이지 진입 시 스크롤 최상단 초기화
-   * 사용자 기기에서 스크롤이 중간에 멈춰있는 현상을 방지합니다.
-   */
+  // 페이지 진입 시 스크롤 위치 초기화 (모바일 스크롤 복원 방지)
   useEffect(() => {
-    // 1. 전체 윈도우 스크롤을 맨 위로 이동
     window.scrollTo(0, 0);
-
-    // 2. scrollArea 컨테이너 요소가 있다면 내부 스크롤도 초기화
     const scrollContainer = document.querySelector(`.${S.scrollArea}`);
     if (scrollContainer) {
       scrollContainer.scrollTop = 0;
     }
   }, []);
 
-  // 체크박스 상태 토글
   const handleCheck = (index: number) => {
     const newCheckedList = [...checkedList];
     newCheckedList[index] = !newCheckedList[index];
     setCheckedList(newCheckedList);
   };
 
-  // 진행률 계산
   const checkedCount = checkedList.filter(Boolean).length;
   const progressPercent = Math.round((checkedCount / 3) * 100);
 
   return (
     <Layout>
-      {/* 1. 전체 스크롤 영역 */}
       <div className={S.scrollArea}>
-        {/* 2. 상단 로고 */}
         <div className={S.topLogo} />
 
-        {/* 3. 헤더 프레임 */}
         <div className={S.headerFrame}>
           <span className={S.headerTitle}>대리인 신청 시 구비 서류</span>
         </div>
 
-        {/* 4. 타이틀 & 캐릭터 가로 배치 컨테이너 */}
         <div className={S.titleContainer}>
           <h2 className={S.subTitle}>
             다무너와 함께
@@ -56,10 +44,8 @@ export default function ProxyGuide() {
           <div className={S.characterImage} />
         </div>
 
-        {/* 5. 준비 현황 텍스트 */}
         <div className={S.statusText}>준비 현황 ({checkedCount} / 3)</div>
 
-        {/* 6. 프로그레스 바 + 퍼센트 가로 배치 */}
         <div className={S.progressWrapper}>
           <div className={S.progressBarContainer}>
             <div
@@ -70,7 +56,7 @@ export default function ProxyGuide() {
           <div className={S.percentText}>{progressPercent} %</div>
         </div>
 
-        {/* 7. 문서 카드 리스트 */}
+        {/* 대리인 신청 구비 서류 카드 리스트 */}
         <button
           type="button"
           className={S.documentCard}
@@ -124,7 +110,6 @@ export default function ProxyGuide() {
         </button>
       </div>
 
-      {/* 8. 하단 고정 요소 */}
       <div className={S.warningBox}>
         <span className={S.warningText}>
           ※ 법인 인감도장을 지참하여 매장 방문 시 위임장/인감증명서는 생략

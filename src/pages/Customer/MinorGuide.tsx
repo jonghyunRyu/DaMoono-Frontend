@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'; // useEffect 추가
+import { useEffect, useState } from 'react';
 import BottomNav from '../../components/BottomNav';
 import BridgeModal from '../Customer/BridgeModal.tsx';
 import Layout from '../layout/Layout';
@@ -8,45 +8,33 @@ export default function MinorGuide() {
   const [checkedList, setCheckedList] = useState([false, false, false]);
   const [targetUrl, setTargetUrl] = useState<string | null>(null);
 
-  /**
-   * [추가] 페이지 진입 시 스크롤 최상단 고정 로직
-   * 모바일 브라우저의 스크롤 복원 기능을 방지하고 페이지를 맨 위에서부터 보여줍니다.
-   */
+  // 페이지 진입 시 스크롤 위치 초기화 (모바일 스크롤 복원 방지)
   useEffect(() => {
-    // 1. 브라우저 윈도우 스크롤 초기화
     window.scrollTo(0, 0);
-
-    // 2. 바닐라 익스트랙으로 정의된 scrollArea 컨테이너 내부 스크롤 초기화
     const scrollContainer = document.querySelector(`.${S.scrollArea}`);
     if (scrollContainer) {
       scrollContainer.scrollTop = 0;
     }
   }, []);
 
-  // 체크박스 토글 함수
   const handleCheck = (index: number) => {
     const newCheckedList = [...checkedList];
     newCheckedList[index] = !newCheckedList[index];
     setCheckedList(newCheckedList);
   };
 
-  // 진행률 계산 로직
   const checkedCount = checkedList.filter(Boolean).length;
   const progressPercent = Math.round((checkedCount / 3) * 100);
 
   return (
     <Layout>
-      {/* 1. 전체 스크롤 영역 */}
       <div className={S.scrollArea}>
-        {/* 2. 상단 로고 (반응형 clamp 적용) */}
         <div className={S.topLogo} />
 
-        {/* 3. 헤더 타이틀 프레임 */}
         <div className={S.headerFrame}>
           <span className={S.headerTitle}>미성년자 가입 구비 서류</span>
         </div>
 
-        {/* 4. 타이틀 & 캐릭터 가로 배치 (반응형 핵심) */}
         <div className={S.titleContainer}>
           <h2 className={S.subTitle}>
             다무너와 함께
@@ -56,13 +44,10 @@ export default function MinorGuide() {
           <div className={S.characterImage} />
         </div>
 
-        {/* 5. 준비 현황 텍스트 */}
         <div className={S.statusText}>준비 현황 ({checkedCount} / 3)</div>
 
-        {/* 6. 프로그레스 바 + 퍼센트 가로 배치 */}
         <div className={S.progressWrapper}>
           <div className={S.progressBarContainer}>
-            {/* 게이지 바 애니메이션 적용 */}
             <div
               className={S.progressGauge}
               style={{ width: `${progressPercent}%` }}
@@ -71,7 +56,7 @@ export default function MinorGuide() {
           <div className={S.percentText}>{progressPercent} %</div>
         </div>
 
-        {/* 7. 문서 카드 리스트 (인라인 top 제거됨) */}
+        {/* 구비 서류 카드 리스트 */}
         <button
           type="button"
           className={S.documentCard}
@@ -102,7 +87,7 @@ export default function MinorGuide() {
             type="button"
             className={S.linkButton}
             onClick={(e) => {
-              e.stopPropagation(); // 카드 체크 방지
+              e.stopPropagation(); // 카드 체크 이벤트 전파 방지
               setTargetUrl('https://www.gov.kr');
             }}
           >
@@ -137,7 +122,6 @@ export default function MinorGuide() {
         </button>
       </div>
 
-      {/* 8. 하단 주의사항 (CSS에서 fixed 처리) */}
       <div className={S.warningBox}>
         <span className={S.warningText}>
           ※ 모든 서류는 발급일로부터 3개월 이내여야 합니다.

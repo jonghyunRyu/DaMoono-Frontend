@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'; // useEffect 추가
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import BottomNav from '../../components/BottomNav';
 import { PAGE_PATHS } from '../../shared/config/paths';
@@ -9,28 +9,20 @@ import * as S from './style/CustomerService.css.ts';
 export default function CustomerService() {
   const navigate = useNavigate();
 
-  // 상태 관리
   const [openId, setOpenId] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState<string>('전체');
 
-  /**
-   * [추가] 페이지 진입 시 스크롤 최상단 초기화 로직
-   * 브라우저가 이전 스크롤 위치를 기억해 하단부터 보여주는 현상을 방지합니다.
-   */
+  // 페이지 진입 시 스크롤 위치 초기화 (모바일 스크롤 복원 방지)
   useEffect(() => {
-    // 1. 전체 윈도우 스크롤 초기화
     window.scrollTo(0, 0);
-
-    // 2. 바닐라 익스트랙 scrollArea 컨테이너 내부 스크롤 초기화
     const scrollContainer = document.querySelector(`.${S.scrollArea}`);
     if (scrollContainer) {
       scrollContainer.scrollTop = 0;
     }
   }, []);
 
-  // 핸들러 함수
   const toggleFaq = (id: string) => setOpenId(openId === id ? null : id);
   const handleCategorySelect = (id: string) =>
     setSelectedCategory(selectedCategory === id ? null : id);
@@ -41,7 +33,6 @@ export default function CustomerService() {
     if (selectedCategory === 'minor') navigate(PAGE_PATHS.MINOR_GUIDE);
   };
 
-  // 필터링 로직
   const filteredFaqs = faqs.filter((faq) => {
     const matchesTab =
       activeTab === '전체' ? faq.isTop10 : faq.category === activeTab;
@@ -53,11 +44,11 @@ export default function CustomerService() {
 
   return (
     <Layout>
-      {/* 상단 헤더 섹션 */}
       <header className={S.headerSection}>
         <div className={S.topLogo} />
         <div className={S.customerCharacter} />
         <h1 className={S.title}>무엇을 도와드릴까요?</h1>
+
         <div className={S.searchContainer}>
           <input
             type="text"
@@ -67,6 +58,7 @@ export default function CustomerService() {
             className={S.searchInput}
           />
         </div>
+
         <div className={S.tabContainer}>
           {['전체', '모바일', '인터넷/TV', '결제/관리', '서비스안내'].map(
             (cat) => (
@@ -85,7 +77,6 @@ export default function CustomerService() {
         </div>
       </header>
 
-      {/* 중앙 스크롤 영역 */}
       <div className={S.scrollArea}>
         <div className={S.faqListWrapper}>
           {filteredFaqs.map((faq) => (
@@ -107,7 +98,7 @@ export default function CustomerService() {
           ))}
         </div>
 
-        {/* 하단 가이드 프레임 */}
+        {/* 하단 퀵 가이드 섹션 */}
         <div className={S.guideFrame}>
           <p className={S.cardTitle}>항목 선택 시 서류 안내</p>
 
