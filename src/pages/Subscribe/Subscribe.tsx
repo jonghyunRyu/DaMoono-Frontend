@@ -125,26 +125,31 @@ function SortFilterPanel({
   const sortOrderMenuRef = useRef<HTMLDivElement>(null);
   const sortMenuRef = useRef<HTMLDivElement>(null);
   const filterMenuRef = useRef<HTMLDivElement>(null);
+  const sortOrderButtonRef = useRef<HTMLButtonElement>(null);
+  const sortTargetButtonRef = useRef<HTMLButtonElement>(null);
+  const filterButtonRef = useRef<HTMLButtonElement>(null);
 
   // 외부 클릭 감지
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Node;
+      if (
+        sortOrderButtonRef.current?.contains(target) ||
+        sortTargetButtonRef.current?.contains(target) ||
+        filterButtonRef.current?.contains(target)
+      ) {
+        return;
+      }
       if (
         sortOrderMenuRef.current &&
-        !sortOrderMenuRef.current.contains(event.target as Node)
+        !sortOrderMenuRef.current.contains(target)
       ) {
         setShowSortOrderMenu(false);
       }
-      if (
-        sortMenuRef.current &&
-        !sortMenuRef.current.contains(event.target as Node)
-      ) {
+      if (sortMenuRef.current && !sortMenuRef.current.contains(target)) {
         setShowSortMenu(false);
       }
-      if (
-        filterMenuRef.current &&
-        !filterMenuRef.current.contains(event.target as Node)
-      ) {
+      if (filterMenuRef.current && !filterMenuRef.current.contains(target)) {
         setShowFilterMenu(false);
       }
     };
@@ -159,10 +164,11 @@ function SortFilterPanel({
     <div className={styles.filterPanel}>
       <div className={styles.filterControls}>
         {/* 정렬 순서 */}
-        <div className={styles.selectWrapper} style={{ width: '85px' }}>
+        <div className={styles.selectWrapper} style={{ width: '120px' }}>
           <button
+            ref={sortOrderButtonRef}
             onClick={() => {
-              setShowSortOrderMenu(!showSortOrderMenu);
+              setShowSortOrderMenu((prev) => !prev);
               setShowSortMenu(false);
               setShowFilterMenu(false);
             }}
@@ -246,8 +252,9 @@ function SortFilterPanel({
         {/* 정렬 기준 */}
         <div className={styles.selectWrapper} style={{ width: '120px' }}>
           <button
+            ref={sortTargetButtonRef}
             onClick={() => {
-              setShowSortMenu(!showSortMenu);
+              setShowSortMenu((prev) => !prev);
               setShowSortOrderMenu(false);
               setShowFilterMenu(false);
             }}
@@ -309,10 +316,11 @@ function SortFilterPanel({
         </div>
 
         {/* 필터 버튼 */}
-        <div className={styles.selectWrapper} style={{ width: '80px' }}>
+        <div className={styles.selectWrapper} style={{ width: '120px' }}>
           <button
+            ref={filterButtonRef}
             onClick={() => {
-              setShowFilterMenu(!showFilterMenu);
+              setShowFilterMenu((prev) => !prev);
               setShowSortOrderMenu(false);
               setShowSortMenu(false);
             }}
@@ -711,6 +719,9 @@ export default function Subscribe() {
             <div className={styles.errorMessage}>{error}</div>
           ) : (
             <>
+              {/* 모든 구독 */}
+              <h2 className={styles.allSubscribesTitle}>모든 구독</h2>
+
               <SortFilterPanel
                 sortOrder={sortOrder}
                 setSortOrder={setSortOrder}
@@ -719,9 +730,6 @@ export default function Subscribe() {
                 selectedCategories={selectedCategories}
                 setSelectedCategories={setSelectedCategories}
               />
-
-              {/* 모든 구독 */}
-              <h2 className={styles.allSubscribesTitle}>모든 구독</h2>
 
               {/* 구독 리스트 */}
               <div className={styles.subscribeList}>
