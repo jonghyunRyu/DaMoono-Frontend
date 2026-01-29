@@ -2,7 +2,8 @@
 
 ## 실시간 상담 및 AI 기반 상담 요약 통신사 플랫폼, 다무너 (DaMoono) 🐙
 
-<img width="1300" height="853" alt="DaMoono Main" src="https://github.com/user-attachments/assets/1c3938b5-b14c-405f-aa1c-13d8ee3291c8" />
+<img width="800" height="400" alt="image" src="https://github.com/user-attachments/assets/ff880c6a-aff5-4124-b319-f3e4be3210da" />
+
 
 **다무너(DaMoono)** 는 
 사용자 맞춤형 최적의 요금제를 추천하고,  
@@ -86,7 +87,7 @@ npm run dev
 ```
 
 ## 🏗️ 시스템 아키텍처
-
+<img width="891" height="371" alt="image" src="https://github.com/user-attachments/assets/634658b6-132a-4b19-b61c-17f33e5fa13b" />
 ```
 Frontend (React + Vite)
    ↕ REST API / WebSocket
@@ -121,4 +122,4 @@ LangChain + OpenAI API
 | <img width="100" height="100" alt="양해강" src="https://via.placeholder.com/100" /> | **양해강**<br/>[@Inoansta](https://github.com/Inoansta) | **Backend · AI**<br/>백엔드 프로젝트 및 DB 초기 셋업, 회원가입·인증 API 구현, REST API 설계, 프론트엔드 연동 및 서비스 배포 환경 구성, AI 기능 연동을 위한 서버 구조 설계 |
 | <img width="100" height="100" alt="이해니" src="https://via.placeholder.com/100" /> | **이해니**<br/>[@haeni82](https://github.com/haeni82) | **Frontend**<br/>상담 요약 페이지(UI) 구현, 유저용 상담 요약 프롬프트(JSON) 설계, 상담사 WebSocket 양방향 통신 구조 설계, 상담 요약 및 후속 액션 제안 기능 기획 |
 | <img width="100" height="100" alt="이혁준" src="https://via.placeholder.com/100" /> | **이혁준**<br/>[@Lilium0422](https://github.com/Lilium0422) | **Frontend**<br/>홈·온보딩·성향 분석 페이지 UI 및 컴포넌트 구현, 사용자 성향 분석 로직 설계, 공용 레이아웃(헤더·하단 메뉴) 및 서비스 가이드 UI 개발 |
-| <img width="100" height="100" alt="유덕현" src="https://via.placeholder.com/100" /> | **유덕현**<br/>[@Ydh0622](https://github.com/Ydh0622) | **Frontend**<br/>FAQ 페이지 및 군인·미성년자·대리인 가입 시 구비 서류 안내 UI 구현, 이미지 애니메이션 및 인터랙션 마무리 |
+| <img width="100" height="100" alt="유덕현" src="https://github.com/user-attachments/assets/f220a58f-7388-4cc2-ac11-d1d82f052084" /> | **유덕현**<br/>[@Ydh0622](https://github.com/Ydh0622) | **Frontend**<br/>FAQ 페이지 및 군인·미성년자·대리인 가입 시 구비 서류 안내 UI 구현, 이미지 애니메이션 및 인터랙션 마무리 |
