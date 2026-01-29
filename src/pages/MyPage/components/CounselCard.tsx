@@ -13,7 +13,7 @@ export function CounselCard({
 }: CounselCardProps) {
   return (
     <div className={css.card}>
-      <div className={css.cardHeader}>
+      <div>
         {summarized ? (
           <span className={css.done}>✔ 요약됨</span>
         ) : (
