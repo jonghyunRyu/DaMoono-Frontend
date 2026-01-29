@@ -19,7 +19,21 @@ import type {
 
 // Temporary flag: force using mock data for local testing.
 // Set to false to use real backend API.
-const USE_TEMP_MOCK = false;
+const USE_TEMP_MOCK = true;
+
+// Placeholder plan used when user hasn't selected a current plan yet
+const NO_SELECTION_PLAN: PlanType = {
+  id: -1,
+  name: '',
+  price: 0,
+  dataAmountMb: 0,
+  overageSpeedMbps: null,
+  voiceMinutes: -1,
+  smsIncluded: 0,
+  networkType: 'LTE',
+  subscriptionServices: [],
+  badges: [],
+};
 
 // 현재 사용 중인 요금제 카드 컴포넌트
 interface CurrentPlanCardProps {
@@ -49,8 +63,9 @@ function CurrentPlanCard({
     overageSpeedMbps,
     subscriptionServices,
   } = plan;
+  const isPlaceholder = plan.id === -1;
 
-  if (isDisabled) {
+  if (isDisabled || isPlaceholder) {
     return (
       <div
         className={`${styles.currentPlanCard} ${styles.currentPlanCardDisabled}`}
@@ -198,7 +213,7 @@ function SortFilterPanel({
   return (
     <div className={styles.filterPanel}>
       <div className={styles.filterControls}>
-        <div className={styles.selectWrapper} style={{ width: '100px' }}>
+        <div className={styles.selectWrapper} style={{ width: '120px' }}>
           <button
             onClick={() => {
               setShowSortOrderMenu((prev) => !prev);
@@ -404,7 +419,7 @@ function SortFilterPanel({
           )}
         </div>
 
-        <div className={styles.selectWrapper} style={{ width: '80px' }}>
+        <div className={styles.selectWrapper} style={{ width: '120px' }}>
           <button
             onClick={() => {
               setShowFilterMenu((prev) => !prev);
@@ -615,14 +630,12 @@ export default function Plan() {
             if (savedPlan) {
               setCurrentPlan(savedPlan);
             } else {
-              setCurrentPlan(
-                MOCK_PLANS[Math.floor(Math.random() * MOCK_PLANS.length)],
-              );
+              // No saved plan -> show placeholder instead of random selection
+              setCurrentPlan(NO_SELECTION_PLAN);
             }
           } else if (MOCK_PLANS.length > 0) {
-            setCurrentPlan(
-              MOCK_PLANS[Math.floor(Math.random() * MOCK_PLANS.length)],
-            );
+            // No saved plan -> show placeholder instead of random selection
+            setCurrentPlan(NO_SELECTION_PLAN);
           }
           setIsLoading(false);
           return;
@@ -641,16 +654,12 @@ export default function Plan() {
           if (savedPlan) {
             setCurrentPlan(savedPlan);
           } else {
-            // 저장된 요금제가 없으면 랜덤 선택
-            setCurrentPlan(
-              fetchedPlans[Math.floor(Math.random() * fetchedPlans.length)],
-            );
+            // No saved plan found -> show placeholder instead of random selection
+            setCurrentPlan(NO_SELECTION_PLAN);
           }
-        } else if (fetchedPlans.length > 0) {
-          // 저장된 요금제가 없으면 랜덤 선택
-          setCurrentPlan(
-            fetchedPlans[Math.floor(Math.random() * fetchedPlans.length)],
-          );
+        } else {
+          // No saved plan -> show placeholder instead of random selection
+          setCurrentPlan(NO_SELECTION_PLAN);
         }
       } catch (err) {
         console.error('요금제 목록을 가져오는 중 오류 발생:', err);
@@ -667,14 +676,10 @@ export default function Plan() {
           if (savedPlan) {
             setCurrentPlan(savedPlan);
           } else {
-            setCurrentPlan(
-              MOCK_PLANS[Math.floor(Math.random() * MOCK_PLANS.length)],
-            );
+            setCurrentPlan(NO_SELECTION_PLAN);
           }
         } else {
-          setCurrentPlan(
-            MOCK_PLANS[Math.floor(Math.random() * MOCK_PLANS.length)],
-          );
+          setCurrentPlan(NO_SELECTION_PLAN);
         }
       } finally {
         setIsLoading(false);
