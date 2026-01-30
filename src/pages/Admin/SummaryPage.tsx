@@ -1,6 +1,5 @@
 import { motion } from 'framer-motion';
 import { useLocation } from 'react-router';
-import BottomNav from '@/components/BottomNav/BottomNav';
 import BackButton from '@/components/Button/BackButton';
 import Header from '@/components/Header/Header';
 import Layout from '@/pages/layout/Layout';
@@ -85,6 +84,37 @@ const SummaryPage = () => {
     location.state?.summaryData?.payload?.summary_admin ||
     MOCK_SUMMARY_DATA.payload.summary_admin;
 
+  if (!summaryData || !summaryData.report_card?.category) {
+    return (
+      <Layout>
+        <Header />
+        <motion.div
+          className={s.pageContainer}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            paddingTop: '100px',
+          }}
+        >
+          <motion.section className={s.characterSection}>
+            {/* 기존 스타일 유지를 위해 캐릭터 씬 등을 활용해도 좋습니다 */}
+            <p
+              style={{ textAlign: 'center', fontSize: '1.2rem', color: '#666' }}
+            >
+              상담 데이터가 충분하지 않아 <br />
+              <strong>리포트를 생성할 수 없습니다.</strong>
+            </p>
+          </motion.section>
+
+          <BackButton targetPath="/chat/admin" label="상담 목록으로 돌아가기" />
+        </motion.div>
+      </Layout>
+    );
+  }
   return (
     <Layout>
       <Header />

@@ -217,7 +217,10 @@ export default function ChatConsultPage() {
 
       const payload = response.data.payload;
 
-      if (!payload || (payload.summary && payload.summary.trim() === '')) {
+      if (
+        !payload ||
+        (payload.summary.trim() === '' && payload.coreActions.length === 0)
+      ) {
         setModalType('noData');
         sessionStorage.removeItem('is_user_summarizing');
         return;
