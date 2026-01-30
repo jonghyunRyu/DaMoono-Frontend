@@ -13,7 +13,7 @@ AI 챗봇과 실시간 상담사 연결을 결합하여
 
 📑 **PPT** : [발표 자료 링크](https://docs.google.com/presentation/d/1wQxBoEXfUBIy0K8m3ecBdHjzo355OtY5/edit?slide=id.g3bc4a3a9b38_2_105#slide=id.g3bc4a3a9b38_2_105)  
 🌐 **배포 링크** : [서비스 바로가기](https://da-moono-frontend-deploy.vercel.app/)  
-🎥 **시연 영상** : [Youtube 시연 영상](여기에_Youtube_링크)
+🎥 **시연 영상** : [Youtube 시연 영상](https://youtu.be/CKL0SLVoZgQ?si=7sPXgvxPVMOXa8U7)
 
 </div>
 
