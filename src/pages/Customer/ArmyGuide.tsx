@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import BottomNav from '../../components/BottomNav';
 import BridgeModal from '../Customer/BridgeModal.tsx';
 import Layout from '../layout/Layout';
@@ -7,6 +7,15 @@ import * as S from './style/ArmyGuide.css';
 export default function ArmyGuide() {
   const [checkedList, setCheckedList] = useState([false, false, false]);
   const [targetUrl, setTargetUrl] = useState<string | null>(null);
+
+  // 페이지 진입 시 스크롤 위치 초기화 (모바일 스크롤 복원 방지)
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    const scrollContainer = document.querySelector(`.${S.scrollArea}`);
+    if (scrollContainer) {
+      scrollContainer.scrollTop = 0;
+    }
+  }, []);
 
   const handleCheck = (index: number) => {
     const newCheckedList = [...checkedList];
@@ -20,39 +29,37 @@ export default function ArmyGuide() {
   return (
     <Layout>
       <div className={S.scrollArea}>
-        {/* 린트 에러 방지를 위해 onClick 제거 */}
         <div className={S.topLogo} />
 
         <div className={S.headerFrame}>
           <span className={S.headerTitle}>군인 요금제 및 군인 혜택 가입</span>
         </div>
 
-        <h2 className={S.subTitle}>
-          다무너와 함께
-          <br />
-          서류를 챙겨보세요
-        </h2>
-
-        {/* 린트 에러 방지를 위해 onClick 제거 */}
-        <div className={S.characterImage} />
+        <div className={S.titleContainer}>
+          <h2 className={S.subTitle}>
+            다무너와 함께
+            <br />
+            서류를 챙겨보세요
+          </h2>
+          <div className={S.characterImage} />
+        </div>
 
         <div className={S.statusText}>준비 현황 ({checkedCount} / 3)</div>
-        <div className={S.progressBarContainer}>
-          <div
-            style={{
-              width: `${progressPercent}%`,
-              height: '100%',
-              backgroundColor: '#FBE88A',
-              transition: 'width 0.3s ease-in-out',
-            }}
-          />
-        </div>
-        <div className={S.percentText}>{progressPercent} %</div>
 
+        <div className={S.progressWrapper}>
+          <div className={S.progressBarContainer}>
+            <div
+              className={S.progressGauge}
+              style={{ width: `${progressPercent}%` }}
+            />
+          </div>
+          <div className={S.percentText}>{progressPercent} %</div>
+        </div>
+
+        {/* 서류 카드 리스트 */}
         <button
           type="button"
           className={S.documentCard}
-          style={{ top: '310px' }}
           onClick={() => handleCheck(0)}
         >
           <div className={S.docText}>
@@ -67,7 +74,6 @@ export default function ArmyGuide() {
         <button
           type="button"
           className={S.documentCard}
-          style={{ top: '480px' }}
           onClick={() => handleCheck(1)}
         >
           <div className={S.docText}>
@@ -79,7 +85,7 @@ export default function ArmyGuide() {
             type="button"
             className={S.linkButton}
             onClick={(e) => {
-              e.stopPropagation();
+              e.stopPropagation(); // 카드 체크 이벤트 전파 방지
               setTargetUrl('https://www.mma.go.kr');
             }}
           >
@@ -90,7 +96,6 @@ export default function ArmyGuide() {
         <button
           type="button"
           className={S.documentCard}
-          style={{ top: '650px' }}
           onClick={() => handleCheck(2)}
         >
           <div className={S.docText}>
@@ -119,6 +124,7 @@ export default function ArmyGuide() {
       {targetUrl && (
         <BridgeModal url={targetUrl} onClose={() => setTargetUrl(null)} />
       )}
+
       <BottomNav />
     </Layout>
   );

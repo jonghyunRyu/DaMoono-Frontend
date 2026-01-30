@@ -17,6 +17,24 @@ import type {
   SortTarget,
 } from './types';
 
+// Temporary flag: force using mock data for local testing.
+// Set to false to use real backend API.
+const USE_TEMP_MOCK = true;
+
+// Placeholder plan used when user hasn't selected a current plan yet
+const NO_SELECTION_PLAN: PlanType = {
+  id: -1,
+  name: '',
+  price: 0,
+  dataAmountMb: 0,
+  overageSpeedMbps: null,
+  voiceMinutes: -1,
+  smsIncluded: 0,
+  networkType: 'LTE',
+  subscriptionServices: [],
+  badges: [],
+};
+
 // 현재 사용 중인 요금제 카드 컴포넌트
 interface CurrentPlanCardProps {
   plan: PlanType;
@@ -45,8 +63,9 @@ function CurrentPlanCard({
     overageSpeedMbps,
     subscriptionServices,
   } = plan;
+  const isPlaceholder = plan.id === -1;
 
-  if (isDisabled) {
+  if (isDisabled || isPlaceholder) {
     return (
       <div
         className={`${styles.currentPlanCard} ${styles.currentPlanCardDisabled}`}
@@ -151,26 +170,34 @@ function SortFilterPanel({
   const sortMenuRef = useRef<HTMLDivElement>(null);
   const sortOrderMenuRef = useRef<HTMLDivElement>(null);
   const filterMenuRef = useRef<HTMLDivElement>(null);
+  const sortOrderButtonRef = useRef<HTMLButtonElement>(null);
+  const sortTargetButtonRef = useRef<HTMLButtonElement>(null);
+  const filterButtonRef = useRef<HTMLButtonElement>(null);
 
   // 외부 클릭 시 메뉴 닫기
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Node;
+
+      // If click is on any of the toggle buttons, do not treat as outside
       if (
-        sortMenuRef.current &&
-        !sortMenuRef.current.contains(event.target as Node)
+        sortOrderButtonRef.current?.contains(target) ||
+        sortTargetButtonRef.current?.contains(target) ||
+        filterButtonRef.current?.contains(target)
       ) {
+        return;
+      }
+
+      if (sortMenuRef.current && !sortMenuRef.current.contains(target)) {
         setShowSortMenu(false);
       }
       if (
         sortOrderMenuRef.current &&
-        !sortOrderMenuRef.current.contains(event.target as Node)
+        !sortOrderMenuRef.current.contains(target)
       ) {
         setShowSortOrderMenu(false);
       }
-      if (
-        filterMenuRef.current &&
-        !filterMenuRef.current.contains(event.target as Node)
-      ) {
+      if (filterMenuRef.current && !filterMenuRef.current.contains(target)) {
         setShowFilterMenu(false);
       }
     };
@@ -186,17 +213,18 @@ function SortFilterPanel({
   return (
     <div className={styles.filterPanel}>
       <div className={styles.filterControls}>
-        <div className={styles.selectWrapper} style={{ width: '100px' }}>
+        <div className={styles.selectWrapper} style={{ width: '120px' }}>
           <button
             onClick={() => {
-              setShowSortOrderMenu(!showSortOrderMenu);
+              setShowSortOrderMenu((prev) => !prev);
               setShowSortMenu(false);
               setShowFilterMenu(false);
             }}
+            ref={sortOrderButtonRef}
             className={styles.selectBase}
           >
             {sortOrder === null
-              ? '기본'
+              ? '기본 순'
               : sortOrder === 'asc'
                 ? '낮은 순'
                 : '높은 순'}
@@ -225,7 +253,7 @@ function SortFilterPanel({
                   setShowSortOrderMenu(false);
                 }}
               >
-                <span>기본</span>
+                <span>기본 순</span>
                 {sortOrder === null && (
                   <svg
                     className={styles.checkIcon}
@@ -303,13 +331,14 @@ function SortFilterPanel({
         <div className={styles.selectWrapper} style={{ width: '120px' }}>
           <button
             onClick={() => {
-              setShowSortMenu(!showSortMenu);
+              setShowSortMenu((prev) => !prev);
               setShowSortOrderMenu(false);
               setShowFilterMenu(false);
             }}
+            ref={sortTargetButtonRef}
             className={styles.selectBase}
           >
-            {sortTarget ? SORT_LABELS[sortTarget] : '정렬 기준'}
+            {sortTarget ? SORT_LABELS[sortTarget] : '기본 정렬'}
           </button>
           <svg
             className={styles.selectIcon}
@@ -328,6 +357,32 @@ function SortFilterPanel({
           </svg>
           {showSortMenu && (
             <div ref={sortMenuRef} className={styles.sortMenu}>
+              <button
+                className={`${styles.sortMenuItem} ${sortTarget === null ? styles.sortMenuItemSelected : ''}`}
+                onClick={() => {
+                  setSortTarget(null);
+                  setShowSortMenu(false);
+                }}
+              >
+                <span>기본 정렬</span>
+                {sortTarget === null && (
+                  <svg
+                    className={styles.checkIcon}
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    aria-label="선택됨"
+                    role="img"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                )}
+              </button>
               {Object.entries(SORT_LABELS).map(([key, label]) => {
                 const isSelected = sortTarget === key;
                 return (
@@ -364,13 +419,14 @@ function SortFilterPanel({
           )}
         </div>
 
-        <div className={styles.selectWrapper} style={{ width: '80px' }}>
+        <div className={styles.selectWrapper} style={{ width: '120px' }}>
           <button
             onClick={() => {
-              setShowFilterMenu(!showFilterMenu);
+              setShowFilterMenu((prev) => !prev);
               setShowSortMenu(false);
               setShowSortOrderMenu(false);
             }}
+            ref={filterButtonRef}
             className={styles.selectBase}
           >
             필터링
@@ -561,6 +617,30 @@ export default function Plan() {
       try {
         setIsLoading(true);
         setError(null);
+        if (USE_TEMP_MOCK) {
+          // Use mock plans for local testing
+          const shuffledMockPlans = [...MOCK_PLANS].sort(
+            () => Math.random() - 0.5,
+          );
+          setPlans(shuffledMockPlans);
+          const savedPlanId = localStorage.getItem('currentPlanId');
+          if (savedPlanId && MOCK_PLANS.length > 0) {
+            const planId = parseInt(savedPlanId, 10);
+            const savedPlan = MOCK_PLANS.find((p) => p.id === planId);
+            if (savedPlan) {
+              setCurrentPlan(savedPlan);
+            } else {
+              // No saved plan -> show placeholder instead of random selection
+              setCurrentPlan(NO_SELECTION_PLAN);
+            }
+          } else if (MOCK_PLANS.length > 0) {
+            // No saved plan -> show placeholder instead of random selection
+            setCurrentPlan(NO_SELECTION_PLAN);
+          }
+          setIsLoading(false);
+          return;
+        }
+
         const fetchedPlans = await getPlans();
         // 랜덤으로 섞기
         const shuffledPlans = [...fetchedPlans].sort(() => Math.random() - 0.5);
@@ -574,16 +654,12 @@ export default function Plan() {
           if (savedPlan) {
             setCurrentPlan(savedPlan);
           } else {
-            // 저장된 요금제가 없으면 랜덤 선택
-            setCurrentPlan(
-              fetchedPlans[Math.floor(Math.random() * fetchedPlans.length)],
-            );
+            // No saved plan found -> show placeholder instead of random selection
+            setCurrentPlan(NO_SELECTION_PLAN);
           }
-        } else if (fetchedPlans.length > 0) {
-          // 저장된 요금제가 없으면 랜덤 선택
-          setCurrentPlan(
-            fetchedPlans[Math.floor(Math.random() * fetchedPlans.length)],
-          );
+        } else {
+          // No saved plan -> show placeholder instead of random selection
+          setCurrentPlan(NO_SELECTION_PLAN);
         }
       } catch (err) {
         console.error('요금제 목록을 가져오는 중 오류 발생:', err);
@@ -600,14 +676,10 @@ export default function Plan() {
           if (savedPlan) {
             setCurrentPlan(savedPlan);
           } else {
-            setCurrentPlan(
-              MOCK_PLANS[Math.floor(Math.random() * MOCK_PLANS.length)],
-            );
+            setCurrentPlan(NO_SELECTION_PLAN);
           }
         } else {
-          setCurrentPlan(
-            MOCK_PLANS[Math.floor(Math.random() * MOCK_PLANS.length)],
-          );
+          setCurrentPlan(NO_SELECTION_PLAN);
         }
       } finally {
         setIsLoading(false);
@@ -680,11 +752,26 @@ export default function Plan() {
     }
     if (sortTarget && sortOrder !== null) {
       filtered.sort((a, b) => {
-        const aVal = a[sortTarget] ?? 0;
-        const bVal = b[sortTarget] ?? 0;
-        return sortOrder === 'asc'
-          ? (aVal as number) - (bVal as number)
-          : (bVal as number) - (aVal as number);
+        // normalize special 'unlimited' values so they sort as highest
+        const rawA = a[sortTarget];
+        const rawB = b[sortTarget];
+
+        let aVal = (rawA ?? 0) as number;
+        let bVal = (rawB ?? 0) as number;
+
+        // dataAmountMb: 0 means unlimited -> treat as very large
+        if (sortTarget === 'dataAmountMb') {
+          aVal = aVal === 0 ? Number.MAX_SAFE_INTEGER : aVal;
+          bVal = bVal === 0 ? Number.MAX_SAFE_INTEGER : bVal;
+        }
+
+        // voiceMinutes: -1 means unlimited -> treat as very large
+        if (sortTarget === 'voiceMinutes') {
+          aVal = aVal === -1 ? Number.MAX_SAFE_INTEGER : aVal;
+          bVal = bVal === -1 ? Number.MAX_SAFE_INTEGER : bVal;
+        }
+
+        return sortOrder === 'asc' ? aVal - bVal : bVal - aVal;
       });
     }
     return filtered;
@@ -740,19 +827,42 @@ export default function Plan() {
             <h2 className={styles.currentPlanTitle}>
               현재 사용중인 요금제 서비스
             </h2>
-            {currentPlan ? (
-              <CurrentPlanCard
-                plan={currentPlan}
-                isSelected={selectedPlanId === currentPlan.id}
-                isCompareMode={isCompareMode}
-                isCompareSelected={comparePlans.includes(currentPlan.id)}
-                isUpdating={isUpdatingPlan}
-                isDisabled={isAuthenticated === false}
-                onClick={handlePlanClick}
-              />
-            ) : (
-              <div className={styles.loadingMessage}>로딩 중...</div>
-            )}
+            {(() => {
+              const hasSavedPlan = !!localStorage.getItem('currentPlanId');
+              if (!hasSavedPlan) {
+                return (
+                  <div
+                    className={`${styles.currentPlanCard} ${styles.currentPlanCardDisabled}`}
+                  >
+                    <div className={styles.disabledContent}>
+                      <img
+                        src={nologinImage}
+                        alt="로그인 필요"
+                        className={styles.disabledImage}
+                      />
+                      <div className={styles.disabledText}>
+                        <span>현재 사용중인 서비스가 없거나</span>
+                        <span>로그인이 되어있지 않습니다.</span>
+                      </div>
+                    </div>
+                  </div>
+                );
+              }
+              if (currentPlan) {
+                return (
+                  <CurrentPlanCard
+                    plan={currentPlan}
+                    isSelected={selectedPlanId === currentPlan.id}
+                    isCompareMode={isCompareMode}
+                    isCompareSelected={comparePlans.includes(currentPlan.id)}
+                    isUpdating={isUpdatingPlan}
+                    isDisabled={isAuthenticated === false}
+                    onClick={handlePlanClick}
+                  />
+                );
+              }
+              return <div className={styles.loadingMessage}>로딩 중...</div>;
+            })()}
           </div>
           <h2 className={styles.allPlansTitle}>요금제 전체보기</h2>
           {isLoading ? (

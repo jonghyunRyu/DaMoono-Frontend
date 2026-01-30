@@ -20,7 +20,7 @@ export default function BridgeModal({ url, onClose }: BridgeModalProps) {
         }
         return prev + 1;
       });
-    }, 40); // 약 4초 동안 프로그레스 바 진행 (30ms * 100)
+    }, 40); // 약 4초간 진행
 
     return () => clearInterval(timer);
   }, [url, onClose]);
@@ -29,6 +29,7 @@ export default function BridgeModal({ url, onClose }: BridgeModalProps) {
     <div className={S.overlay}>
       <div className={S.modalFrame}>
         <div className={S.characterImage} />
+
         <h2 className={S.title}>
           잠시 후 해당 페이지로
           <br />
@@ -36,7 +37,7 @@ export default function BridgeModal({ url, onClose }: BridgeModalProps) {
         </h2>
 
         <div className={S.progressContainer}>
-          {/* 퍼센트 수치에 따른 동적 바 렌더링 */}
+          {/* 게이지 바: width만 상태값으로 주입 */}
           <div
             style={{
               position: 'absolute',
@@ -55,18 +56,21 @@ export default function BridgeModal({ url, onClose }: BridgeModalProps) {
 
         <div className={S.buttonGroup}>
           <button
+            type="button"
             className={S.actionButton}
             onClick={() => {
-              window.open(url, '_blank'); // 즉시 이동
+              window.open(url, '_blank');
               onClose();
             }}
           >
             [ 지금이동 ]
           </button>
+
           <button
+            type="button"
             className={S.actionButton}
-            style={{ color: '#666' }}
-            onClick={onClose} // 이동 취소 및 모달 닫기
+            style={{ color: '#666666' }}
+            onClick={onClose}
           >
             취소
           </button>

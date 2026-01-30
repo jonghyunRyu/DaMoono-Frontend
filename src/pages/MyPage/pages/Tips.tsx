@@ -30,7 +30,7 @@ export default function TipsPage() {
             </li>
             <li className={css.featureItem}>
               <span className={css.checkBox}>✓</span>
-              나에게 맞는 맞춤 서비스를
+              나에게 맞는 맞춤 서비스를 추천 받기
             </li>
           </ul>
         </div>
