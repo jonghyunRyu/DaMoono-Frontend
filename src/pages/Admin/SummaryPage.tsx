@@ -1,6 +1,5 @@
 import { motion } from 'framer-motion';
 import { useLocation } from 'react-router';
-import BottomNav from '@/components/BottomNav/BottomNav';
 import BackButton from '@/components/Button/BackButton';
 import Header from '@/components/Header/Header';
 import Layout from '@/pages/layout/Layout';
